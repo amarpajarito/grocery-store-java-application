@@ -28,6 +28,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.AbstractListModel;
 import javax.swing.JTextArea;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import java.awt.Component;
 import javax.swing.JRadioButton;
@@ -56,7 +57,15 @@ public class Grocery_Group1 extends JFrame {
 	private JButton btnClearRow1;
 	private JButton btnCheckOut;
 	private JButton btnClearRow2;
-
+	private JCheckBox chckbxWmembership;
+	private JCheckBox chckbxSeniorOrPwd;
+	private JRadioButton rdbtnCash;
+	private JRadioButton rdbtnCreditCard;
+	private JRadioButton rdbtnDebitCard;
+	private ButtonGroup rdbtnGroup;
+	private JButton btnClearRow4;
+	private JButton btnConfirm;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -77,10 +86,12 @@ public class Grocery_Group1 extends JFrame {
 	    private float unitPrice;
 	    private int quantity;
 	    private float subtotal;
+	    private String name;
 
-	    public Item(float unitPrice, int quantity) {
+	    public Item(float unitPrice, int quantity, String name) {
 	        this.unitPrice = unitPrice;
 	        this.quantity = quantity;
+	        this.name = name; // Initialize the name in the constructor
 	        this.subtotal = unitPrice * quantity;
 	    }
 
@@ -94,6 +105,10 @@ public class Grocery_Group1 extends JFrame {
 
 	    public float getSubtotal() {
 	        return subtotal;
+	    }
+
+	    public String getName() {
+	        return name;
 	    }
 	}
 	
@@ -119,8 +134,21 @@ public class Grocery_Group1 extends JFrame {
 	    boolean hasItems = !txtaOutput.getText().trim().isEmpty();
 	    btnCheckOut.setEnabled(hasItems);
 	    btnClearRow2.setEnabled(hasItems);
-	}
 
+	}
+	
+	private void updateButtonStateAfterCheckOut() {
+		boolean hasItems = !txtaOutput.getText().trim().isEmpty();
+		
+		chckbxWmembership.setEnabled(hasItems);
+	    chckbxSeniorOrPwd.setEnabled(hasItems);
+	    rdbtnCash.setEnabled(hasItems);
+	    rdbtnCreditCard.setEnabled(hasItems);
+	    rdbtnDebitCard.setEnabled(hasItems);
+	    btnCheckOut.setEnabled(false);
+	    btnClearRow2.setEnabled(false);
+	}
+	
 	/**
 	 * Create the frame.
 	 */
@@ -240,18 +268,18 @@ public class Grocery_Group1 extends JFrame {
 		pnlItems.add(lstList, gbc_lstList);
 		
 		Map<String, Map<String, Float>> categoryItemsMap = new HashMap<>();
-		categoryItemsMap.put("Fresh & Package Foods", Map.of("Meat", 350.00f, "Fish", 200.00f, "Dairy", 50.00f, "Baked Goods", 60.00f));
-		categoryItemsMap.put("Beverages", Map.of("Coffee", 150.00f, "Tea", 100.00f, "Juice", 50.00f, "Soda", 25.00f, "Beer", 40.00f, "Wine", 300.00f));
+		categoryItemsMap.put("Fresh & Package Foods", Map.of("Meat", 350.00f, "Fish", 200.00f, "Dairy", 50.00f, "Baked Goods", 60.00f, "Rice", 60.00f, "Bread", 50.00f));
+		categoryItemsMap.put("Beverages", Map.of("Coffee", 150.00f, "Tea", 100.00f, "Juice", 50.00f, "Soda", 25.00f, "Beer", 40.00f, "Wine", 300.00f, "Milk", 100.00f, "Water", 40.00f));
 		categoryItemsMap.put("Canned Goods", Map.of("Soup", 45.00f, "Tuna", 35.00f, "Beans", 40.00f, "Vegetables", 30.00f, "Pasta Sauce", 70.00f));
 		categoryItemsMap.put("Condiments & Spices", Map.of("Salt", 10.00f, "Pepper", 20.00f, "Oregano", 50.00f, "Cinnamon", 30.00f, "Sugar", 40.00f, "Olive Oil", 250.00f, "Ketchup", 50.00f, "Mayonnaise", 60.00f));
-		categoryItemsMap.put("Household Products", Map.of("Paper Towels", 100.00f, "Tissues", 50.00f, "Trash Bags", 80.00f, "Dish Soap", 30.00f, "Laundry Detergent", 150.00f, "Aluminum Foil", 40.00f));
+		categoryItemsMap.put("Household Products", Map.of("Paper Towels", 100.00f, "Tissues", 50.00f, "Trash Bags", 80.00f, "Dish Soap", 30.00f, "Laundry Detergent", 150.00f, "Aluminum Foil", 40.00f, "LPG", 300.00f));
 		categoryItemsMap.put("Personal Care Products", Map.of("Shampoo", 80.00f, "Conditioner", 80.00f, "Deodorant", 100.00f, "Toothpaste", 60.00f, "Dental Floss", 50.00f));
 		categoryItemsMap.put("Pet Care Products", Map.of("Pet Food", 200.00f, "Kitty Litter", 150.00f, "Chew Toys", 100.00f, "Pet Shampoo", 120.00f));
 
 		cmbCategory.addActionListener(e -> {
 		    String selectedCategory = (String) cmbCategory.getSelectedItem();
 		    listModel.clear();
-
+		    
 		    if ("Select a category".equals(selectedCategory)) {
 		        disableFieldsAndButtons();
 		        txtfUnitPrice.setText("");
@@ -352,6 +380,8 @@ public class Grocery_Group1 extends JFrame {
 		btnClearRow1.setFont(new Font("Verdana", Font.PLAIN, 14));
 		pnlButtonRow1.add(btnClearRow1);
 		
+		
+		
 		btnAddtoCart.addActionListener(new ActionListener() {
 		    @Override
 		    public void actionPerformed(ActionEvent e) {
@@ -362,7 +392,9 @@ public class Grocery_Group1 extends JFrame {
 		            String selectedItem = lstList.getSelectedValue();
 
 		            if (selectedItem != null) {
-		                cartItems.add(new Item(unitPrice, quantity));
+		                // Pass unitPrice, quantity, and selectedItem (name) to the Item constructor
+		                cartItems.add(new Item(unitPrice, quantity, selectedItem));
+
 		                String output = String.format("%s - Php %.2f x %d = Php %.2f", selectedItem, unitPrice, quantity, subtotal);
 		                txtaOutput.append(output + "\n");
 		                txtfSubTotal.setText(String.format("%.2f", subtotal));
@@ -373,14 +405,13 @@ public class Grocery_Group1 extends JFrame {
 		                    JOptionPane.INFORMATION_MESSAGE);
 		                
 		                updateButtonState();
-
+		               
 		                cmbCategory.setSelectedIndex(0);
 		                txtfQuantity.setText("");
 		                txtfUnitPrice.setText("");
 		                txtfSubTotal.setText("");
 		                txtfUnitPrice.setEditable(false);
 		                txtfSubTotal.setEditable(false);
-		                
 		                
 		            } else {
 		                JOptionPane.showMessageDialog(mainFrame,
@@ -394,8 +425,11 @@ public class Grocery_Group1 extends JFrame {
 		                "Input Error",
 		                JOptionPane.ERROR_MESSAGE);
 		        }
+		        
+		        
 		    }
 		});
+
 
 		btnClearRow1.addActionListener(new ActionListener() {
 		    @Override
@@ -408,6 +442,7 @@ public class Grocery_Group1 extends JFrame {
 		    }
 		});
 		
+		// Panel Row 2
 		JPanel pnlRow2 = new JPanel();
 		pnlRow2.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		GridBagConstraints gbc_pnlRow2 = new GridBagConstraints();
@@ -467,9 +502,10 @@ public class Grocery_Group1 extends JFrame {
 		                "Your cart is empty. Please add items before checking out.",
 		                "Checkout Error",
 		                JOptionPane.ERROR_MESSAGE);
+		            
 		            return;
-		        }
-
+		        } 
+		        
 		        float totalAmount = 0;
 		        for (Item item : cartItems) {
 		            totalAmount += item.getSubtotal();
@@ -479,6 +515,10 @@ public class Grocery_Group1 extends JFrame {
 		            String.format("Your total amount is: Php %.2f\nPlease proceed to the checkout section to apply discounts and select a payment method.", totalAmount),
 		            "Proceed to Checkout",
 		            JOptionPane.INFORMATION_MESSAGE);
+		        
+		        	updateButtonStateAfterCheckOut();
+		            cmbCategory.setEnabled(false);
+		       
 		    }
 		});
 		
@@ -489,6 +529,8 @@ public class Grocery_Group1 extends JFrame {
 		        txtaOutput.setText("");
 		        
 		        updateButtonState();
+		        updateButtonStateAfterCheckOut();
+		        
 		    }
 		});
 		
@@ -520,36 +562,95 @@ public class Grocery_Group1 extends JFrame {
 		pnlSubRow3.add(pnlDiscount);
 		pnlDiscount.setLayout(new GridLayout(2, 1, 10, 10));
 		
-		JCheckBox chckbxWmembership = new JCheckBox("with Membership Discount");
+		chckbxWmembership = new JCheckBox("with Membership Discount");
+		chckbxWmembership.setEnabled(false);
 		chckbxWmembership.setFont(new Font("Verdana", Font.PLAIN, 14));
 		chckbxWmembership.setHorizontalAlignment(SwingConstants.LEFT);
 		pnlDiscount.add(chckbxWmembership);
 		
-		JCheckBox chckbxSeniorOrPwd = new JCheckBox("Senior or PWD");
+		chckbxWmembership.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent e) {
+	    	
+	    		btnClearRow4.setEnabled(true);
+	    	}
+	    });
+		
+	    chckbxSeniorOrPwd = new JCheckBox("Senior or PWD");
+		chckbxSeniorOrPwd.setEnabled(false);
 		chckbxSeniorOrPwd.setFont(new Font("Verdana", Font.PLAIN, 14));
 		chckbxSeniorOrPwd.setHorizontalAlignment(SwingConstants.LEFT);
 		chckbxSeniorOrPwd.setAlignmentY(Component.BOTTOM_ALIGNMENT);
 		chckbxSeniorOrPwd.setAlignmentX(Component.CENTER_ALIGNMENT);
 		pnlDiscount.add(chckbxSeniorOrPwd);
 		
+		chckbxSeniorOrPwd.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent e) {
+	    		
+	    		btnClearRow4.setEnabled(true);
+	    	}
+	    });
+		
 		JPanel pnlModeOfPayment = new JPanel();
 		pnlSubRow3.add(pnlModeOfPayment);
 		pnlModeOfPayment.setLayout(new GridLayout(3, 1, 10, 10));
 		
-		JRadioButton rdbtnCash = new JRadioButton("Cash");
+		rdbtnCash = new JRadioButton("Cash");
+		rdbtnCash.setEnabled(false);
 		rdbtnCash.setFont(new Font("Verdana", Font.PLAIN, 14));
 		rdbtnCash.setHorizontalAlignment(SwingConstants.LEFT);
 		pnlModeOfPayment.add(rdbtnCash);
 		
-		JRadioButton rdbtnCreditCard = new JRadioButton("Credit Card");
+		rdbtnCash.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent e) {
+	    		
+	    		passfieldPin1.setEnabled(false);
+	    		passfieldPin1.setEditable(false);
+	    		passfieldPin2.setEnabled(false);
+	    		passfieldPin2.setEditable(false);
+	    		rdbtnCreditCard.setEnabled(false);
+	    		rdbtnDebitCard.setEnabled(false);
+	    		btnClearRow4.setEnabled(true);
+	    	}
+	    });
+		
+	    rdbtnCreditCard = new JRadioButton("Credit Card");
+		rdbtnCreditCard.setEnabled(false);
 		rdbtnCreditCard.setFont(new Font("Verdana", Font.PLAIN, 14));
 		rdbtnCreditCard.setHorizontalAlignment(SwingConstants.LEFT);
 		pnlModeOfPayment.add(rdbtnCreditCard);
 		
-		JRadioButton rdbtnDebitCard = new JRadioButton("Debit Card");
+		rdbtnCreditCard.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent e) {
+	    		
+	    		passfieldPin1.setEnabled(true);
+	    		passfieldPin1.setEditable(true);
+	    		rdbtnCash.setEnabled(false);
+	    		rdbtnDebitCard.setEnabled(false);
+	    		btnClearRow4.setEnabled(true);
+	    	}
+	    });
+		
+	    rdbtnDebitCard = new JRadioButton("Debit Card");
+		rdbtnDebitCard.setEnabled(false);
 		rdbtnDebitCard.setFont(new Font("Verdana", Font.PLAIN, 14));
 		rdbtnDebitCard.setHorizontalAlignment(SwingConstants.LEFT);
 		pnlModeOfPayment.add(rdbtnDebitCard);
+		
+		rdbtnDebitCard.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent e) {
+	    		
+	    		passfieldPin2.setEnabled(true);
+	    		passfieldPin2.setEditable(true);
+	    		rdbtnCash.setEnabled(false);
+	    		rdbtnCreditCard.setEnabled(false);
+	    		btnClearRow4.setEnabled(true);
+	    	}
+	    });
+		
+		rdbtnGroup = new ButtonGroup();
+		rdbtnGroup.add(rdbtnCash);
+		rdbtnGroup.add(rdbtnCreditCard);
+		rdbtnGroup.add(rdbtnDebitCard);
 		
 		JPanel pnlPin = new JPanel();
 		pnlSubRow3.add(pnlPin);
@@ -561,6 +662,8 @@ public class Grocery_Group1 extends JFrame {
 		pnlPin.add(lblPin1);
 		
 		passfieldPin1 = new JPasswordField();
+		passfieldPin1.setEnabled(false);
+		passfieldPin1.setEditable(false);
 		passfieldPin1.setFont(new Font("Verdana", Font.PLAIN, 14));
 		pnlPin.add(passfieldPin1);
 		
@@ -570,6 +673,8 @@ public class Grocery_Group1 extends JFrame {
 		pnlPin.add(lblPin2);
 		
 		passfieldPin2 = new JPasswordField();
+		passfieldPin2.setEnabled(false);
+		passfieldPin2.setEditable(false);
 		passfieldPin2.setFont(new Font("Verdana", Font.PLAIN, 14));
 		pnlPin.add(passfieldPin2);
 		
@@ -581,13 +686,94 @@ public class Grocery_Group1 extends JFrame {
 		gbc_pnlRow4.gridy = 3;
 		mainFrame.add(pnlRow4, gbc_pnlRow4);
 		
-		JButton btnConfirm = new JButton("Confirm");
+		btnConfirm = new JButton("Confirm");
 		btnConfirm.setFont(new Font("Verdana", Font.PLAIN, 14));
 		pnlRow4.add(btnConfirm);
 		
-		JButton btnClearRow4 = new JButton("Clear");
+		btnConfirm.addActionListener(new ActionListener() {
+
+		    private static final List<String> vitalGoods = List.of("Rice", "Bread", "Milk", "Water", "LPG");
+
+		    private boolean isVitalGood(String itemName) {
+		        return vitalGoods.stream().anyMatch(item -> item.equalsIgnoreCase(itemName));
+		    }
+
+		    public void actionPerformed(ActionEvent e) {
+		        float totalAmount = 0;
+
+		        // Calculate original total price
+		        for (Item item : cartItems) {
+		            totalAmount += item.getSubtotal();
+		        }
+
+		        // Apply discounts
+		        if (chckbxSeniorOrPwd.isSelected()) {
+		            float discountVital = 0.20f; // 20% for vital goods
+		            float discountBasic = 0.05f; // 5% for basic necessities
+		            float discountedTotal = 0;
+
+		            for (Item item : cartItems) {
+		                String itemName = item.getName(); // Get the name of each item
+		                if (isVitalGood(itemName)) { // Check if the item is a vital good
+		                    discountedTotal += item.getSubtotal() * (1 - discountVital); // Apply 20% discount for vital goods
+		                } else {
+		                    discountedTotal += item.getSubtotal() * (1 - discountBasic); // Apply 5% discount for non-vital goods
+		                }
+		            }
+		            
+		            totalAmount = discountedTotal; // Update total after discount
+
+		        } else if (chckbxWmembership.isSelected()) {
+		            totalAmount *= 0.90; // Apply 10% discount for members
+		        }
+		        
+		        //Calculate Tax
+		        float taxFee = 0.20f;
+		        float taxAmount = totalAmount * taxFee;
+		        float grandTotal = totalAmount + taxAmount;
+		   
+		        // Display total amount in a JOptionPane when Confirm button is clicked
+		        JOptionPane.showMessageDialog(null, "Total amount after discount: " + totalAmount + "\nWith 20% Tax: " + grandTotal);
+		    }
+		});
+
+	
+		btnClearRow4 = new JButton("Clear");
+		btnClearRow4.setEnabled(false);
 		btnClearRow4.setFont(new Font("Verdana", Font.PLAIN, 14));
 		pnlRow4.add(btnClearRow4);
+		
+		btnClearRow4.addActionListener(new ActionListener() {
+	    	public void actionPerformed(ActionEvent e) {
+	    		
+	    		cartItems.clear();
+	    		txtaOutput.setText("");
+	    		btnClearRow4.setEnabled(false);
+	    		passfieldPin1.setEnabled(false);
+	    		passfieldPin1.setEditable(false);
+		        passfieldPin2.setEnabled(false);
+	    		passfieldPin2.setEditable(false);
+	    		passfieldPin1.setText("");
+	    		passfieldPin2.setText("");
+	    		chckbxWmembership.setEnabled(false);
+	    	    chckbxSeniorOrPwd.setEnabled(false);
+	    	    chckbxWmembership.setSelected(false);
+	    	    chckbxSeniorOrPwd.setSelected(false);
+	    	    rdbtnCash.setEnabled(false);
+	    	    rdbtnCreditCard.setEnabled(false);
+	    	    rdbtnDebitCard.setEnabled(false);
+	    	    rdbtnGroup.clearSelection();
+	    		cmbCategory.setEnabled(true);
+	    		
+	    	}
+	    });
+		
+		
+		 
+		
 	}
+	
+	
+	
 
 }
