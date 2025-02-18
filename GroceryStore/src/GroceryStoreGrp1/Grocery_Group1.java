@@ -603,6 +603,7 @@ public class Grocery_Group1 extends JFrame {
 		rdbtnCash.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
 	    		
+	    		btnConfirm.setEnabled(true);
 	    		passfieldPin1.setEnabled(false);
 	    		passfieldPin1.setEditable(false);
 	    		passfieldPin2.setEnabled(false);
@@ -612,6 +613,7 @@ public class Grocery_Group1 extends JFrame {
 	    		btnClearRow4.setEnabled(true);
 	    	}
 	    });
+		
 		
 	    rdbtnCreditCard = new JRadioButton("Credit Card");
 		rdbtnCreditCard.setEnabled(false);
@@ -638,6 +640,7 @@ public class Grocery_Group1 extends JFrame {
 		
 		rdbtnDebitCard.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
+	    		
 	    		
 	    		passfieldPin2.setEnabled(true);
 	    		passfieldPin2.setEditable(true);
@@ -687,6 +690,7 @@ public class Grocery_Group1 extends JFrame {
 		mainFrame.add(pnlRow4, gbc_pnlRow4);
 		
 		btnConfirm = new JButton("Confirm");
+		btnConfirm.setEnabled(false);
 		btnConfirm.setFont(new Font("Verdana", Font.PLAIN, 14));
 		pnlRow4.add(btnConfirm);
 		
@@ -699,8 +703,9 @@ public class Grocery_Group1 extends JFrame {
 		    }
 
 		    public void actionPerformed(ActionEvent e) {
+		   
 		        float totalAmount = 0;
-
+		        
 		        // Calculate original total price
 		        for (Item item : cartItems) {
 		            totalAmount += item.getSubtotal();
@@ -731,9 +736,19 @@ public class Grocery_Group1 extends JFrame {
 		        float taxFee = 0.20f;
 		        float taxAmount = totalAmount * taxFee;
 		        float grandTotal = totalAmount + taxAmount;
-		   
+		        
+		     // Check if credit or debit card is selected
+		        if (rdbtnCreditCard.isSelected() || rdbtnDebitCard.isSelected()) {
+		            float cardFee = 0.01f; // 1% charge for card payments
+		            float cardCharge = grandTotal * cardFee; // Calculate the card charge
+		            grandTotal += cardCharge; // Add the card charge to the grand total
+		        }
+
 		        // Display total amount in a JOptionPane when Confirm button is clicked
-		        JOptionPane.showMessageDialog(null, "Total amount after discount: " + totalAmount + "\nWith 20% Tax: " + grandTotal);
+		        JOptionPane.showMessageDialog(null, "Total amount after discount: " + totalAmount + 
+		                                      "\nWith 20% Tax: " + (totalAmount + taxAmount) + 
+		                                      "\nCard Charges: " + (grandTotal - (totalAmount + taxAmount)) + 
+		                                      "\nGrand Total: " + grandTotal);
 		    }
 		});
 
