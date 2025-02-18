@@ -624,6 +624,7 @@ public class Grocery_Group1 extends JFrame {
 		rdbtnCreditCard.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
 	    		
+	    		btnConfirm.setEnabled(false);
 	    		passfieldPin1.setEnabled(true);
 	    		passfieldPin1.setEditable(true);
 	    		rdbtnCash.setEnabled(false);
@@ -641,7 +642,7 @@ public class Grocery_Group1 extends JFrame {
 		rdbtnDebitCard.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
 	    		
-	    		
+	    		btnConfirm.setEnabled(false);
 	    		passfieldPin2.setEnabled(true);
 	    		passfieldPin2.setEditable(true);
 	    		rdbtnCash.setEnabled(false);
