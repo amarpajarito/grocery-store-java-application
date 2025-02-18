@@ -152,6 +152,10 @@ public class Grocery_Group1 extends JFrame {
 	    btnClearRow2.setEnabled(false);
 	}
 	
+	private void updateclear3ButtonState() {
+	    btnClearRow4.setEnabled(chckbxSeniorOrPwd.isSelected() || chckbxWmembership.isSelected());
+	}
+	
 	private void resetApplication() {
 	    
 	    // Reset all fields and clear cart
@@ -610,7 +614,7 @@ public class Grocery_Group1 extends JFrame {
 		chckbxWmembership.addActionListener(new ActionListener() {
 			@Override
 		    public void actionPerformed(ActionEvent e) {
-			btnClearRow4.setEnabled(true);
+				updateclear3ButtonState();
 			}
 	    });
 		
@@ -625,7 +629,7 @@ public class Grocery_Group1 extends JFrame {
 		chckbxSeniorOrPwd.addActionListener(new ActionListener() {
 			@Override
 		    public void actionPerformed(ActionEvent e) {
-			btnClearRow4.setEnabled(true);
+				updateclear3ButtonState();
 			}
 	    });
 		
