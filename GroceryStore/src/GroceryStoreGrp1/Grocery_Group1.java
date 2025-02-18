@@ -38,7 +38,7 @@ import java.awt.FlowLayout;
 import javax.swing.JPasswordField;
 import javax.swing.border.LineBorder;
 import java.awt.Color;
-
+import java.awt.event.*;
 public class Grocery_Group1 extends JFrame {
 //hello
 	private static final long serialVersionUID = 1L;
@@ -65,6 +65,9 @@ public class Grocery_Group1 extends JFrame {
 	private ButtonGroup rdbtnGroup;
 	private JButton btnClearRow4;
 	private JButton btnConfirm;
+	private JComboBox<String> cmbCategory;
+	private int pinAttempts = 0; // Counter for PIN attempts
+	private static final String CORRECT_PIN = "1234"; // Correct PIN code
 	
 	/**
 	 * Launch the application.
@@ -149,6 +152,44 @@ public class Grocery_Group1 extends JFrame {
 	    btnClearRow2.setEnabled(false);
 	}
 	
+	private void resetApplication() {
+	    
+	    // Reset all fields and clear cart
+	    cartItems.clear();
+	    txtaOutput.setText("");
+	    pinAttempts = 0; // Reset attempts
+	    passfieldPin1.setText("");
+	    passfieldPin2.setText("");
+	    passfieldPin1.setEnabled(false);
+	    passfieldPin1.setEditable(false);
+	    passfieldPin2.setEnabled(false);
+	    passfieldPin2.setEditable(false);
+	    chckbxWmembership.setEnabled(false);
+	    chckbxSeniorOrPwd.setEnabled(false);
+	    chckbxWmembership.setSelected(false);
+	    chckbxSeniorOrPwd.setSelected(false);
+	    rdbtnCash.setEnabled(false);
+	    rdbtnCreditCard.setEnabled(false);
+	    rdbtnDebitCard.setEnabled(false);
+	    rdbtnGroup.clearSelection();
+	    cmbCategory.setEnabled(true);
+	    btnConfirm.setEnabled(false);
+	    btnClearRow4.setEnabled(false);
+	}
+	
+	private void UpdateBtnStateAfterConfirmation() {
+		passfieldPin1.setEnabled(false);
+	    passfieldPin1.setEditable(false);
+	    passfieldPin2.setEnabled(false);
+	    passfieldPin2.setEditable(false);
+	    btnConfirm.setEnabled(false);
+	    chckbxWmembership.setEnabled(false);
+	    chckbxSeniorOrPwd.setEnabled(false);
+	    rdbtnCash.setEnabled(false);
+	    rdbtnCreditCard.setEnabled(false);
+	    rdbtnDebitCard.setEnabled(false);
+	}
+	
 	/**
 	 * Create the frame.
 	 */
@@ -218,7 +259,7 @@ public class Grocery_Group1 extends JFrame {
 		gbc_lblCategory.gridy = 0;
 		pnlCategory.add(lblCategory, gbc_lblCategory);
 		
-		JComboBox cmbCategory = new JComboBox();
+		cmbCategory = new JComboBox();
 		cmbCategory.setFont(new Font("Verdana", Font.PLAIN, 14));
 		cmbCategory.setModel(new DefaultComboBoxModel<>(new String[]{
 	            "Select a category", 
@@ -317,8 +358,6 @@ public class Grocery_Group1 extends JFrame {
 		        }
 		    }
 		});
-
-
 		
 		JPanel pnlCart = new JPanel();
 		pnlSub1.add(pnlCart);
@@ -569,10 +608,10 @@ public class Grocery_Group1 extends JFrame {
 		pnlDiscount.add(chckbxWmembership);
 		
 		chckbxWmembership.addActionListener(new ActionListener() {
-	    	public void actionPerformed(ActionEvent e) {
-	    	
-	    		btnClearRow4.setEnabled(true);
-	    	}
+			@Override
+		    public void actionPerformed(ActionEvent e) {
+			btnClearRow4.setEnabled(true);
+			}
 	    });
 		
 	    chckbxSeniorOrPwd = new JCheckBox("Senior or PWD");
@@ -584,10 +623,10 @@ public class Grocery_Group1 extends JFrame {
 		pnlDiscount.add(chckbxSeniorOrPwd);
 		
 		chckbxSeniorOrPwd.addActionListener(new ActionListener() {
-	    	public void actionPerformed(ActionEvent e) {
-	    		
-	    		btnClearRow4.setEnabled(true);
-	    	}
+			@Override
+		    public void actionPerformed(ActionEvent e) {
+			btnClearRow4.setEnabled(true);
+			}
 	    });
 		
 		JPanel pnlModeOfPayment = new JPanel();
@@ -608,8 +647,8 @@ public class Grocery_Group1 extends JFrame {
 	    		passfieldPin1.setEditable(false);
 	    		passfieldPin2.setEnabled(false);
 	    		passfieldPin2.setEditable(false);
-	    		rdbtnCreditCard.setEnabled(false);
-	    		rdbtnDebitCard.setEnabled(false);
+	    		/*rdbtnCreditCard.setEnabled(false);
+	    		rdbtnDebitCard.setEnabled(false);*/
 	    		btnClearRow4.setEnabled(true);
 	    	}
 	    });
@@ -627,8 +666,11 @@ public class Grocery_Group1 extends JFrame {
 	    		btnConfirm.setEnabled(false);
 	    		passfieldPin1.setEnabled(true);
 	    		passfieldPin1.setEditable(true);
-	    		rdbtnCash.setEnabled(false);
-	    		rdbtnDebitCard.setEnabled(false);
+	    		passfieldPin2.setEnabled(false);
+	    		passfieldPin2.setEditable(false);
+	    		passfieldPin2.setText("");
+	    		/*rdbtnCash.setEnabled(false);
+	    		rdbtnDebitCard.setEnabled(false)*/
 	    		btnClearRow4.setEnabled(true);
 	    	}
 	    });
@@ -645,8 +687,11 @@ public class Grocery_Group1 extends JFrame {
 	    		btnConfirm.setEnabled(false);
 	    		passfieldPin2.setEnabled(true);
 	    		passfieldPin2.setEditable(true);
-	    		rdbtnCash.setEnabled(false);
-	    		rdbtnCreditCard.setEnabled(false);
+	    		passfieldPin1.setEnabled(false);
+	    		passfieldPin1.setEditable(false);
+	    		passfieldPin1.setText("");
+	    		/*rdbtnCash.setEnabled(false);
+	    		rdbtnCreditCard.setEnabled(false);*/
 	    		btnClearRow4.setEnabled(true);
 	    	}
 	    });
@@ -671,6 +716,23 @@ public class Grocery_Group1 extends JFrame {
 		passfieldPin1.setFont(new Font("Verdana", Font.PLAIN, 14));
 		pnlPin.add(passfieldPin1);
 		
+		passfieldPin1.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        String enteredPin = new String(passfieldPin1.getPassword());
+		        if (enteredPin.equals(CORRECT_PIN)) {
+		            JOptionPane.showMessageDialog(mainFrame, "Credit Card PIN is correct.", "Success", JOptionPane.INFORMATION_MESSAGE);
+		            btnConfirm.setEnabled(true); // Enable the Confirm button
+		        } else {
+		            pinAttempts++;
+		            JOptionPane.showMessageDialog(mainFrame, "Incorrect PIN. Try again.", "Error", JOptionPane.ERROR_MESSAGE);
+		            if (pinAttempts >= 3) {
+		                resetApplication();
+		                JOptionPane.showMessageDialog(mainFrame, "Too many incorrect attempts. The application will now reset.", "Error", JOptionPane.ERROR_MESSAGE);
+		            }
+		        }
+		    }
+		});
+		
 		JLabel lblPin2 = new JLabel("Pin");
 		lblPin2.setHorizontalAlignment(SwingConstants.CENTER);
 		lblPin2.setFont(new Font("Verdana", Font.PLAIN, 14));
@@ -681,6 +743,22 @@ public class Grocery_Group1 extends JFrame {
 		passfieldPin2.setEditable(false);
 		passfieldPin2.setFont(new Font("Verdana", Font.PLAIN, 14));
 		pnlPin.add(passfieldPin2);
+		
+		passfieldPin2.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        String enteredPin = new String(passfieldPin2.getPassword());
+		        if (enteredPin.equals(CORRECT_PIN)) {
+		            JOptionPane.showMessageDialog(mainFrame, "Debit Card PIN is correct.", "Success", JOptionPane.INFORMATION_MESSAGE);
+		            btnConfirm.setEnabled(true); // Enable the Confirm button
+		        } else {
+		            pinAttempts++;
+		            JOptionPane.showMessageDialog(mainFrame, "Incorrect PIN. Try again.", "Error", JOptionPane.ERROR_MESSAGE);
+		            if (pinAttempts >= 3) {
+		                resetApplication();
+		            }
+		        }
+		    }
+		});
 		
 		JPanel pnlRow4 = new JPanel();
 		GridBagConstraints gbc_pnlRow4 = new GridBagConstraints();
@@ -746,10 +824,13 @@ public class Grocery_Group1 extends JFrame {
 		        }
 
 		        // Display total amount in a JOptionPane when Confirm button is clicked
-		        JOptionPane.showMessageDialog(null, "Total amount after discount: " + totalAmount + 
-		                                      "\nWith 20% Tax: " + (totalAmount + taxAmount) + 
-		                                      "\nCard Charges: " + (grandTotal - (totalAmount + taxAmount)) + 
-		                                      "\nGrand Total: " + grandTotal);
+		        JOptionPane.showMessageDialog(null, "Total amount after discount: " + df.format(totalAmount) + 
+		                                      "\nWith 20% Tax: " + df.format(totalAmount + taxAmount) + 
+		                                      "\nCard Charges: " + df.format(grandTotal - (totalAmount + taxAmount)) + 
+		                                      "\nGrand Total: " + df.format(grandTotal));
+		        
+		        UpdateBtnStateAfterConfirmation();
+		    	 
 		    }
 		});
 
@@ -762,24 +843,7 @@ public class Grocery_Group1 extends JFrame {
 		btnClearRow4.addActionListener(new ActionListener() {
 	    	public void actionPerformed(ActionEvent e) {
 	    		
-	    		cartItems.clear();
-	    		txtaOutput.setText("");
-	    		btnClearRow4.setEnabled(false);
-	    		passfieldPin1.setEnabled(false);
-	    		passfieldPin1.setEditable(false);
-		        passfieldPin2.setEnabled(false);
-	    		passfieldPin2.setEditable(false);
-	    		passfieldPin1.setText("");
-	    		passfieldPin2.setText("");
-	    		chckbxWmembership.setEnabled(false);
-	    	    chckbxSeniorOrPwd.setEnabled(false);
-	    	    chckbxWmembership.setSelected(false);
-	    	    chckbxSeniorOrPwd.setSelected(false);
-	    	    rdbtnCash.setEnabled(false);
-	    	    rdbtnCreditCard.setEnabled(false);
-	    	    rdbtnDebitCard.setEnabled(false);
-	    	    rdbtnGroup.clearSelection();
-	    		cmbCategory.setEnabled(true);
+	    		resetApplication();
 	    		
 	    	}
 	    });
